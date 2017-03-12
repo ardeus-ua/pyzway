@@ -1,0 +1,4 @@
+mypy-lang
+pylint
+requests
+wheel
