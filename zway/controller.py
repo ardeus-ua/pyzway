@@ -15,9 +15,9 @@ class Controller(object):
 
     @property
     def devices(self):
-        return self.get_all_devices()
+        return self._get_all_devices()
 
-    def get_all_devices(self):
+    def _get_all_devices(self):
         response = self._zsession.get("/devices")
         all_devices = []
         for device_dict in response.json().get('data').get('devices'):
@@ -25,15 +25,15 @@ class Controller(object):
             if device_dict['permanently_hidden']:
                 continue
             if device_type == 'switchBinary':
-                all_devices.append(zway.devices.SwitchBinary(self._zsession, device_dict))
+                all_devices.append(zway.devices.SwitchBinary(device_dict, self._zsession))
             elif device_type == 'switchMultilevel':
-                all_devices.append(zway.devices.SwitchMultilevel(self._zsession, device_dict))
+                all_devices.append(zway.devices.SwitchMultilevel(device_dict, self._zsession))
             elif device_type == 'switchRGBW':
-                all_devices.append(zway.devices.SwitchRGBW(self._zsession, device_dict))
+                all_devices.append(zway.devices.SwitchRGBW(device_dict, self._zsession))
             elif device_type == 'sensorBinary':
-                all_devices.append(zway.devices.SensorBinary(self._zsession, device_dict))
+                all_devices.append(zway.devices.SensorBinary(device_dict, self._zsession))
             elif device_type == 'sensorMultilevel':
-                all_devices.append(zway.devices.SensorMultilevel(self._zsession, device_dict))
+                all_devices.append(zway.devices.SensorMultilevel(device_dict, self._zsession))
             else:
-                all_devices.append(zway.devices.GenericDevice(self._zsession, device_dict))
+                all_devices.append(zway.devices.GenericDevice(device_dict, self._zsession))
         return all_devices
