@@ -1,6 +1,10 @@
 """ZWay Session"""
 
+import logging
 import requests
+
+
+_LOGGER = logging.getLogger(__name__)
 
 
 class ZWaySession(object):
@@ -13,6 +17,7 @@ class ZWaySession(object):
         self._session.auth = (username, password)
 
     def get(self, path):
+        _LOGGER.debug("GET " + path)
         request_uri = self.apipath + path
         return self._session.get(request_uri)
 

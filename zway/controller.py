@@ -5,12 +5,14 @@ from zway.session import ZWaySession
 import zway.devices
 
 
+_LOGGER = logging.getLogger(__name__)
+
+
 class Controller(object):
     def __init__(self,
                  baseurl: str,
                  username: str=None,
                  password: str=None):
-        self._logger = logging.getLogger(__name__).getChild(self.__class__.__name__)
         self._zsession = ZWaySession(baseurl, username, password)
 
     @property
