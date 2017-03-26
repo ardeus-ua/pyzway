@@ -1,5 +1,6 @@
 # pyZWay
 
+pyZWay is a Python module for Z-Way Automation API.
 
 ## References
 
