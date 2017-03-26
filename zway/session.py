@@ -1,26 +1,15 @@
 """ZWay Session"""
 
-import logging
 import requests
 
+class ZWaySession(requests.Session):
+    """Session for Z-Way Automation API"""
 
-_LOGGER = logging.getLogger(__name__)
+    def __init__(self, *args, **kwargs) -> None:
+        self.zway_baseurl = kwargs.get('baseurl')
+        del kwargs['baseurl']
+        super().__init__(*args, **kwargs)
 
-
-class ZWaySession(object):
-    def __init__(self,
-                 baseurl: str,
-                 username: str=None,
-                 password: str=None):
-        self._baseurl = baseurl
-        self._session = requests.Session()
-        self._session.auth = (username, password)
-
-    def get(self, path):
-        _LOGGER.debug("GET " + path)
-        request_uri = self.apipath + path
-        return self._session.get(request_uri)
-
-    @property
-    def apipath(self):
-        return self._baseurl + "/ZAutomation/api/v1"
+    def request(self, method, url, **kwargs):
+        url = self.zway_baseurl + "/ZAutomation/api/v1" + url
+        return super().request(method, url, **kwargs)
