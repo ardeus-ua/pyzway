@@ -22,6 +22,9 @@ class GenericDevice(object):
         self.title = self._data['metrics'].get('title')
         self.visible = self._data['visibility']
 
+    def json(self):
+        return self._data
+
     def is_tagged(self, tag: str) -> bool:
         return tag in self._data.get('tags', [])
 
@@ -56,13 +59,17 @@ class GenericMultiLevelDevice(GenericDevice):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-    def update_attrs(self, data: dict):
+    def update_attrs(self, data: dict) -> None:
         super().update_attrs(data)
         self._level = data['metrics']['level']
 
     @property
     def level(self) -> int:
         return self._level
+
+    @level.setter
+    def level(self, value: int) -> None:
+        self._zsession.get("/devices/{}/command/exact?level={}".format(self.id, value))
 
 
 class SwitchBinary(GenericBinaryDevice):
@@ -88,6 +95,11 @@ class SwitchRGBW(SwitchBinary):
     @property
     def rgb(self) -> None:
         return (self._red, self._green, self._blue)
+
+    @rgb.setter
+    def rgb(self, color: (int,int,int)) -> None:
+        (red, green, blue) = color
+        self._zsession.get("/devices/{}/command/exact?red={}&green={}&blue={}".format(self.id, red, green, blue))
 
 
 class SensorBinary(GenericBinaryDevice):
