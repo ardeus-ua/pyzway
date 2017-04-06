@@ -25,8 +25,11 @@ class GenericDevice(object):
     def json(self):
         return self._data
 
-    def is_tagged(self, tag: str) -> bool:
-        return tag in self._data.get('tags', [])
+    def is_tagged(self, tag: str=None) -> bool:
+        if tag is not None:
+            return tag in self._data.get('tags', [])
+        else
+            return True
 
 
 class GenericBinaryDevice(GenericDevice):
