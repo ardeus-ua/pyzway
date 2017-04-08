@@ -21,6 +21,7 @@ class GenericDevice(object):
         self.id = self._data['id']
         self.title = self._data['metrics'].get('title')
         self.visible = self._data['visibility']
+        self.devicetype = self._data['deviceType']
 
     def json(self):
         return self._data
@@ -28,7 +29,7 @@ class GenericDevice(object):
     def is_tagged(self, tag: str=None) -> bool:
         if tag is not None:
             return tag in self._data.get('tags', [])
-        else
+        else:
             return True
 
 
@@ -65,6 +66,17 @@ class GenericMultiLevelDevice(GenericDevice):
     def update_attrs(self, data: dict) -> None:
         super().update_attrs(data)
         self._level = data['metrics']['level']
+
+    @property
+    def state(self) -> bool:
+        return (self._level > 0)
+
+    @state.setter
+    def state(self, value: bool) -> None:
+        if value:
+            self.level = 255
+        else:
+            self.level = 0
 
     @property
     def level(self) -> int:
