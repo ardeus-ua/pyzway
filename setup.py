@@ -4,7 +4,7 @@ from setuptools import setup
 
 setup(
     name='zway',
-    version='0.0',
+    version='0.1',
     description='Python for Z-Way',
     author='Jakob Schlyter',
     author_email='jakob@kirei.se',
