@@ -3,7 +3,7 @@
 from setuptools import setup
 
 setup(
-    name='zway',
+    name='pyzway',
     version='0.1',
     description='Python for Z-Way',
     author='Jakob Schlyter',
