@@ -2,6 +2,7 @@
 
 import requests
 
+
 class ZWaySession(requests.Session):
     """Session for Z-Way Automation API"""
 
