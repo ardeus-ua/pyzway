@@ -8,6 +8,8 @@ setup(
     description='Python for Z-Way',
     author='Jakob Schlyter',
     author_email='jakob@kirei.se',
+    license='BSD',
+    keywords='zwave',
     classifiers=[
         'License :: OSI Approved :: BSD License',
         'Programming Language :: Python :: 3 :: Only'
