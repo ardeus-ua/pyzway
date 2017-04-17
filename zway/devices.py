@@ -41,15 +41,15 @@ class GenericBinaryDevice(GenericDevice):
     def _update_attrs(self, data: dict):
         super()._update_attrs(data)
         if data['metrics']['level'] == 'on':
-            self._state = True
+            self._on = True
         elif data['metrics']['level'] == 'off':
-            self._state = False
+            self._on = False
         else:
-            self._state = None
+            self._on = None
 
     @property
-    def state(self) -> bool:
-        return self._state
+    def on(self) -> bool:
+        return self._on
 
 
 class GenericMultiLevelDevice(GenericDevice):
@@ -61,7 +61,7 @@ class GenericMultiLevelDevice(GenericDevice):
         self._level = data['metrics']['level']
 
     @property
-    def state(self) -> bool:
+    def on(self) -> bool:
         return self._level > 0
 
     @property
@@ -74,11 +74,11 @@ class SwitchBinary(GenericBinaryDevice):
         super().__init__(*args, **kwargs)
 
     @property
-    def state(self) -> bool:
-        return self._state
+    def on(self) -> bool:
+        return self._on
 
-    @state.setter
-    def state(self, value: bool) -> None:
+    @on.setter
+    def on(self, value: bool) -> None:
         if value:
             command = "on"
         else:
@@ -91,11 +91,11 @@ class SwitchMultilevel(GenericMultiLevelDevice):
         super().__init__(*args, **kwargs)
 
     @property
-    def state(self) -> bool:
+    def on(self) -> bool:
         return self._level > 0
 
-    @state.setter
-    def state(self, value: bool) -> None:
+    @on.setter
+    def on(self, value: bool) -> None:
         if value:
             self.level = 255
         else:
