@@ -2,7 +2,7 @@
 
 import logging
 from typing import List
-from zway.session import ZWaySession
+from requests import Session
 import zway.devices
 
 
@@ -16,8 +16,9 @@ class Controller(object):
                  baseurl: str,
                  username: str=None,
                  password: str=None):
-        self._zsession = ZWaySession(baseurl=baseurl)
-        self._zsession.auth = (username, password)
+        self._session = Session()
+        self._session.auth = (username, password)
+        self._prefix = baseurl + "/ZAutomation/api/v1"
 
     @property
     def devices(self) -> List[zway.devices.GenericDevice]:
@@ -26,7 +27,7 @@ class Controller(object):
 
     def get_all_devices(self) -> List[zway.devices.GenericDevice]:
         """Return all known devices (except those permanently hidden)"""
-        response = self._zsession.get("/devices")
+        response = self._session.get(self._prefix + "/devices")
         all_devices = []
         for device_dict in response.json().get('data').get('devices'):
             if device_dict['permanently_hidden']:
@@ -36,21 +37,21 @@ class Controller(object):
 
     def get_device(self, device_id: str) -> zway.devices.GenericDevice:
         """Return single device by ID"""
-        response = self._zsession.get("/devices/" + device_id)
+        response = self._session.get(self._prefix + "/devices/" + device_id)
         return self._get_device_object(response.json().get('data'))
 
     def _get_device_object(self, device_dict) -> zway.devices.GenericDevice:
         """Build device object from device data dictionary"""
         device_type = device_dict['deviceType']
         if device_type == 'switchBinary':
-            return zway.devices.SwitchBinary(device_dict, self._zsession)
+            return zway.devices.SwitchBinary(device_dict, self._session, self._prefix)
         elif device_type == 'switchMultilevel':
-            return zway.devices.SwitchMultilevel(device_dict, self._zsession)
+            return zway.devices.SwitchMultilevel(device_dict, self._session, self._prefix)
         elif device_type == 'switchRGBW':
-            return zway.devices.SwitchRGBW(device_dict, self._zsession)
+            return zway.devices.SwitchRGBW(device_dict, self._session, self._prefix)
         elif device_type == 'sensorBinary':
-            return zway.devices.SensorBinary(device_dict, self._zsession)
+            return zway.devices.SensorBinary(device_dict, self._session, self._prefix)
         elif device_type == 'sensorMultilevel':
-            return zway.devices.SensorMultilevel(device_dict, self._zsession)
+            return zway.devices.SensorMultilevel(device_dict, self._session, self._prefix)
         else:
-            return zway.devices.GenericDevice(device_dict, self._zsession)
+            return zway.devices.GenericDevice(device_dict, self._session, self._prefix)

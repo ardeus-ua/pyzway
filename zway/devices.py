@@ -1,20 +1,21 @@
 """Python module for ZWay Devices"""
 
 import logging
-from zway.session import ZWaySession
+from requests import Session
 
 
 _LOGGER = logging.getLogger(__name__)
 
 
 class GenericDevice(object):
-    def __init__(self, data: dict, zsession: ZWaySession):
-        self._zsession = zsession
+    def __init__(self, data: dict, session: Session, prefix: str):
+        self._session = session
+        self._prefix = prefix
         self._update_attrs(data)
 
     def update(self) -> None:
         """Update object with data from ZWay"""
-        data = self._zsession.get("/devices/" + self.id).json().get('data')
+        data = self._session.get(self._prefix + "/devices/" + self.id).json().get('data')
         self._update_attrs(data)
 
     def _update_attrs(self, data: dict) -> None:
@@ -82,7 +83,7 @@ class SwitchBinary(GenericBinaryDevice):
             command = "on"
         else:
             command = "off"
-        self._zsession.get("/devices/{}/command/{}".format(self.id, command))
+        self._session.get(self._prefix + "/devices/{}/command/{}".format(self.id, command))
 
 
 class SwitchMultilevel(GenericMultiLevelDevice):
@@ -106,7 +107,7 @@ class SwitchMultilevel(GenericMultiLevelDevice):
 
     @level.setter
     def level(self, value: int) -> None:
-        self._zsession.get("/devices/{}/command/exact?level={}".format(self.id, value))
+        self._session.get(self._prefix + "/devices/{}/command/exact?level={}".format(self.id, value))
 
 
 class SwitchRGBW(SwitchBinary):
@@ -126,7 +127,7 @@ class SwitchRGBW(SwitchBinary):
     @rgb.setter
     def rgb(self, color: (int, int, int)) -> None:
         (red, green, blue) = color
-        self._zsession.get("/devices/{}/command/exact?red={}&green={}&blue={}".format(self.id, red, green, blue))
+        self._session.get(self._prefix + "/devices/{}/command/exact?red={}&green={}&blue={}".format(self.id, red, green, blue))
 
 
 class SensorBinary(GenericBinaryDevice):
