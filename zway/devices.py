@@ -1,6 +1,7 @@
 """Python module for ZWay Devices"""
 
 import logging
+from typing import Tuple
 from requests import Session
 
 
@@ -8,7 +9,7 @@ _LOGGER = logging.getLogger(__name__)
 
 
 class GenericDevice(object):
-    def __init__(self, data: dict, session: Session, prefix: str):
+    def __init__(self, data: dict, session: Session, prefix: str) -> None:
         self._session = session
         self._prefix = prefix
         self._update_attrs(data)
@@ -121,11 +122,11 @@ class SwitchRGBW(SwitchBinary):
         self._blue = data['metrics']['color']['b']
 
     @property
-    def rgb(self) -> None:
+    def rgb(self) -> Tuple[int, int, int]:
         return (self._red, self._green, self._blue)
 
     @rgb.setter
-    def rgb(self, color: (int, int, int)) -> None:
+    def rgb(self, color: Tuple[int, int, int]) -> None:
         (red, green, blue) = color
         self._session.get(self._prefix + "/devices/{}/command/exact?red={}&green={}&blue={}".format(self.id, red, green, blue))
 
@@ -146,3 +147,17 @@ class SensorMultilevel(GenericMultiLevelDevice):
     @property
     def unit(self) -> int:
         return self._unit
+
+
+def create_device(device_dict: dict, session: Session, prefix: str) -> GenericDevice:
+    """Create ZWay device from device data dictionary"""
+    device_class_map = {
+        'switchBinary': SwitchBinary,
+        'switchMultilevel': SwitchMultilevel,
+        'switchRGBW': SwitchRGBW,
+        'sensorBinary': SensorBinary,
+        'sensorMultilevel': SensorMultilevel,
+    }
+    device_type = device_dict['deviceType']
+    cls = device_class_map.get(device_type, GenericDevice)
+    return cls(device_dict, session, prefix)
