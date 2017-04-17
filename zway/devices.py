@@ -62,10 +62,6 @@ class GenericMultiLevelDevice(GenericDevice):
         self._level = data['metrics']['level']
 
     @property
-    def on(self) -> bool:
-        return self._level > 0
-
-    @property
     def level(self) -> int:
         return self._level
 
