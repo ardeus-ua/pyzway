@@ -111,16 +111,12 @@ class Thermostat(Thermostat):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-    @property
-    def on(self) -> bool:
-        return self._level > 5
-
-    @on.setter
-    def on(self, value: bool) -> None:
-        if value:
-            self.level = 255
-        else:
-            self.level = 0
+    def _update_attrs(self, data: dict) -> None:
+        super()._update_attrs(data)
+        self._unit = data['metrics']['scaleTitle']
+        self._level = data['metrics']['level']
+        self._min = data['metrics']['min']
+        self._max = data['metrics']['max']
 
     @property
     def level(self) -> float:
