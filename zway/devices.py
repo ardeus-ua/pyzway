@@ -165,6 +165,19 @@ class SensorMultilevel(GenericMultiLevelDevice):
         return self._unit
 
 
+class Battery(GenericMultiLevelDevice):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+    def _update_attrs(self, data: dict) -> None:
+        super()._update_attrs(data)
+        self._unit = data['metrics']['scaleTitle']
+
+    @property
+    def unit(self) -> int:
+        return self._unit
+
+
 def create_device(device_dict: dict, session: Session, prefix: str) -> GenericDevice:
     """Create ZWay device from device data dictionary"""
     device_class_map = {
@@ -173,6 +186,8 @@ def create_device(device_dict: dict, session: Session, prefix: str) -> GenericDe
         'switchRGBW': SwitchRGBW,
         'sensorBinary': SensorBinary,
         'sensorMultilevel': SensorMultilevel,
+        'thermostat': Thermostat,
+        'battery': Battery,
     }
     device_type = device_dict['deviceType']
     cls = device_class_map.get(device_type, GenericDevice)
