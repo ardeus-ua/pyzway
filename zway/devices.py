@@ -107,6 +107,30 @@ class SwitchMultilevel(GenericMultiLevelDevice):
         self._session.get(self._prefix + "/devices/{}/command/exact?level={}".format(self.id, value))
 
 
+class Thermostat(Thermostat):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+    @property
+    def on(self) -> bool:
+        return self._level > 5
+
+    @on.setter
+    def on(self, value: bool) -> None:
+        if value:
+            self.level = 255
+        else:
+            self.level = 0
+
+    @property
+    def level(self) -> float:
+        return self._level
+
+    @level.setter
+    def level(self, value: float) -> None:
+        self._session.get(self._prefix + "/devices/{}/command/exact?level={}".format(self.id, value))
+
+
 class SwitchRGBW(SwitchBinary):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
