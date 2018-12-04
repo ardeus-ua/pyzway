@@ -171,6 +171,7 @@ class Battery(GenericMultiLevelDevice):
 
     def _update_attrs(self, data: dict) -> None:
         super()._update_attrs(data)
+        self._level = data['metrics']['level']
         self._unit = data['metrics']['scaleTitle']
 
     @property
